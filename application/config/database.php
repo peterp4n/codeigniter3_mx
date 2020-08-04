@@ -73,11 +73,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
+$db_type = 'mysqli';
+$db_user = 'userid';
+$db_pass = 'userpw';
+
+switch($db_type) {
+	case 'pdo' :
+	case 'mysqli' :
+		$db_dsn = 'mysql:host=db_host;dbname=db_name';
+		$db_host = 'localhost';
+		break;
+
+	case 'mysql' :
+		$db_dsn = '';
+		$db_host = 'localhost';
+		break;
+
+	case 'oracle' :
+		$db_dsn = '';
+		$db_host = 'db_ip/service_name';
+		break;
+}
+
 $db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => '',
-	'password' => '',
+	'dsn'	=> $db_dsn,
+	'hostname' => $db_host,
+	'username' => $db_user,
+	'password' => $db_pass,
 	'database' => '',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
@@ -94,3 +116,7 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+if($db_type=='oracle') {
+	$db['default']['autoinit'] = TRUE;
+}

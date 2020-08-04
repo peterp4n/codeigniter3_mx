@@ -35,7 +35,7 @@ $config['base_url'] = '';
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -100,7 +100,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -223,7 +223,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 1;
 
 /*
 |--------------------------------------------------------------------------
@@ -324,7 +324,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '';
+$config['encryption_key'] = 'codeigniter_mx';
 
 /*
 |--------------------------------------------------------------------------
@@ -377,13 +377,31 @@ $config['encryption_key'] = '';
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'files';
+$sess_driver = 'database';
+switch($sess_driver) {
+	case 'database' :
+		$sess_driver = 'database';
+		$sess_save_path = 'ci_sessions';
+		break;
+	case 'redis' :
+		$sess_driver = 'redis';
+		$sess_save_path = 'tcp://localhost:6379';
+		break;
+	case 'files' :
+	default :
+		$sess_driver = 'files';
+		$sess_save_path = NULL;
+		break;
+}
+$config['sess_driver'] = $sess_driver;
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = NULL;
+$config['sess_save_path'] = $sess_save_path;
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
+$config['sess_time_to_update'] = 300;		// 세션 재생성 시간 5분
+$config['sess_expiration'] = 0;				// 0 이면 브라우저 닫으면 세션 종료
+$config['sess_expire_on_close'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -448,12 +466,14 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
-$config['csrf_protection'] = FALSE;
-$config['csrf_token_name'] = 'csrf_test_name';
-$config['csrf_cookie_name'] = 'csrf_cookie_name';
+$config['csrf_protection'] = TRUE;
+$config['csrf_token_name'] = 'csrf_token';
+$config['csrf_cookie_name'] = 'csrf_cookie';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array();
+$config['csrf_exclude_uris'] = [
+	// exception csrf path
+];
 
 /*
 |--------------------------------------------------------------------------
